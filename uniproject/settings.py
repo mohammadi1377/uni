@@ -11,22 +11,22 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import logging
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sq3v(6$%l0nb6g^nr)ai##kfr-z-)$5nn+&=@=t70mf70)h0s0'
+SECRET_KEY = 'django-insecure-e7@0=+lchwa842b_ou=cydxcmb9ot-@jyttv*_c=t$8gdr6-ip'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'user',
     'academic',
     'rest_framework',
-
 ]
 
 MIDDLEWARE = [
@@ -73,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'uniproject.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -83,7 +81,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -103,21 +100,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = "Asia/Tehran"
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
-
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -127,6 +119,27 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user.User'
 
+# Define the log file path
+log_file_path = os.path.join(BASE_DIR, 'logs', 'api.log')
+
+# Create the logs directory if it doesn't exist
+logs_dir = os.path.dirname(log_file_path)
+os.makedirs(logs_dir, exist_ok=True)
+
+# Configure the logging handlers
+handlers = [
+    # Console handler
+    logging.StreamHandler(),
+    # File handler
+    logging.FileHandler(log_file_path),
+]
+
+# Configure the logging format
+log_format = "%(asctime)s [%(levelname)s] %(module)s - %(message)s"
+logging.basicConfig(level=logging.DEBUG, handlers=handlers, format=log_format)
+
+# Get the logger for the current module
+logger = logging.getLogger(__name__)

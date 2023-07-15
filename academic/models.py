@@ -1,4 +1,8 @@
+# academic/models.py
 from django.db import models
+from django.db.models import UniqueConstraint
+
+from user.models import Professor, Student
 
 
 class Department(models.Model):
@@ -12,7 +16,7 @@ class Course(models.Model):
     name = models.CharField(max_length=200, help_text='Enter the name of the course')
     code = models.CharField(max_length=20, unique=True, help_text='Enter the course code')
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    description = models.TextField(help_text='Enter a brief description of the course')
+    description = models.TextField(help_text='Enter a brief description of the course', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -21,9 +25,15 @@ class Course(models.Model):
 class Room(models.Model):
     name = models.CharField(max_length=50, help_text='Enter the room name or number')
     capacity = models.PositiveIntegerField(help_text='Enter the maximum number of occupants for the room')
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['name', 'department'], name='unique_room_department')
+        ]
 
 
 class Class(models.Model):
@@ -33,6 +43,8 @@ class Class(models.Model):
     start_time = models.DateTimeField(help_text='Enter the start time of the class')
     end_time = models.DateTimeField(help_text='Enter the end time of the class')
     days_of_week = models.CharField(max_length=10, help_text='Enter the days of the week the class meets')
+    students = models.ManyToManyField(Student)
+    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.course} in {self.room} on {self.days_of_week}'

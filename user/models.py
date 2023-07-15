@@ -2,7 +2,6 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
-from academic.models import Class, Department, Field, Specialization
 
 
 class User(AbstractUser):
@@ -30,9 +29,8 @@ class User(AbstractUser):
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    classes = models.ManyToManyField(Class)
-    field = models.ForeignKey(Field, on_delete=models.SET_NULL, null=True)
-    specialization = models.ForeignKey(Specialization, on_delete=models.SET_NULL, null=True)
+    field = models.ForeignKey('academic.Field', on_delete=models.SET_NULL, null=True)
+    specialization = models.ForeignKey('academic.Specialization', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ["user__last_name", "user__first_name"]
@@ -43,10 +41,8 @@ class Student(models.Model):
 
 class Professor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, default=1)
-    field = models.ForeignKey(Field, on_delete=models.SET_NULL, null=True)
-    classes = models.ForeignKey(Class, on_delete=models.SET_NULL, null=True)
-    specializations = models.ManyToManyField(Specialization)
+    field = models.ForeignKey('academic.Field', on_delete=models.SET_NULL, null=True)
+    specializations = models.ManyToManyField('academic.Specialization')
 
     def __str__(self):
         return self.user.get_full_name()
